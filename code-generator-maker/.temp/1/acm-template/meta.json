@@ -1,0 +1,28 @@
+{
+    "name": "acm-template-pro-generator",
+    "description": "ACM 示例模板生成器",
+    "fileConfig": {
+        "sourceRootPath": "D:/700_code/710_project/code-generator/code-generator-maker/.temp/1/acm-template",
+        "files": [
+            {
+                "inputPath": "src/com/shuaigef/acm/MainTemplate.java",
+                "outputPath": "src/com/shuaigef/acm/MainTemplate.java.ftl",
+                "type": "file",
+                "generateType": "dynamic"
+            }
+        ]
+    },
+    "modelConfig": {
+        "models": [
+            {
+                "fieldName": "className",
+                "type": "String"
+            },
+            {
+                "fieldName": "outputText",
+                "type": "String",
+                "defaultValue": "sum = "
+            }
+        ]
+    }
+}
