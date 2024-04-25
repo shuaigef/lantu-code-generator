@@ -7,9 +7,9 @@ package com.shuaigef.maker.generator.main;
 public class MainGenerator extends GenerateTemplate{
 
     @Override
-    protected void buildDist(String outputPath, String jarPath, String shellOutputFilePath, String sourceCopDestPath) {
+    protected String buildDist(String outputPath, String jarPath, String shellOutputFilePath, String sourceCopDestPath) {
         System.out.println("-- 不要生成精简版程序包啦！~~>_<~~");
-
+        return "";
     }
 
 }
