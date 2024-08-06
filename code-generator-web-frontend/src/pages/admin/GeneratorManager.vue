@@ -84,7 +84,7 @@
 // import {useUserStore} from "../store";
 // import {useRouter} from "vue-router";
 import {computed, onMounted, ref} from "vue";
-import {deleteGenerator, listGeneratorByPage} from "../api/code-generator.ts";
+import {deleteGenerator, listGeneratorByPage} from "../../api/code-generator.ts";
 import {message} from "ant-design-vue";
 import dayjs from 'dayjs'
 

@@ -36,7 +36,7 @@
           </div>
 
           <a-card v-else hoverable style="width: 265px" :bodyStyle="{ 'padding-bottom': '5px', 'height': '140px' }"
-                  v-for="(item, index) in dataSource">
+                  v-for="(item, index) in dataSource" @click="toDetail(item.id)">
             <template #cover>
               <img alt="example" :src="item.picture" />
             </template>
@@ -75,8 +75,11 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from 'vue';
 import {listGeneratorVOByPage} from "../api/code-generator.ts";
-import {transferTime} from "../utils/transfer";
+import {transferTime} from "../utils";
 import {message} from "ant-design-vue";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 const activeKey = ref('1');
 const searchText = ref('');
@@ -171,6 +174,10 @@ const resetQuery = () => {
   listGenerator()
 }
 //#endregion
+
+const toDetail = (id: string) => {
+  router.push(`/generator/detail/${id}`)
+}
 </script>
 
 <style scoped>

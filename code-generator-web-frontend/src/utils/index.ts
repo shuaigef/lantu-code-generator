@@ -1,3 +1,5 @@
+import {isNull, isObject, omitBy} from "lodash";
+
 export function transferTime(time: string) {
     let createTime: any = new Date(time)
 
@@ -35,10 +37,15 @@ export function transferTime(time: string) {
     if (diffYears >= 1) {
         result = `${diffYears}年前`
     }
-
-
     return result
+}
 
-
-
+export function deepOmitBy(obj: object) {
+    let result = omitBy(obj, isNull)
+    for (let i in result) {
+        if (isObject(result[i])) {
+            result[i] = deepOmitBy(result[i])
+        }
+    }
+    return result
 }

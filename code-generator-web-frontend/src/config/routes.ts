@@ -4,8 +4,11 @@ import {useUserStore} from "../store";
 import {getLoginUser} from "../api/user.ts";
 import BasicLayout from "../layouts/BasicLayout.vue";
 import {message} from "ant-design-vue";
-import GeneratorManager from "../pages/GeneratorManager.vue";
-import CreateGenerator from "../pages/CreateGenerator.vue";
+import GeneratorManager from "../pages/admin/GeneratorManager.vue";
+import CreateGenerator from "../pages/generator/CreateGenerator.vue";
+import GeneratorDetail from "../pages/generator/GeneratorDetail.vue";
+import UseGenerator from "../pages/generator/UseGenerator.vue";
+import Register from "../pages/Register.vue";
 
 const routes = [
     {
@@ -16,7 +19,13 @@ const routes = [
         path: '/login',
         component: Login,
         name: 'login'
-    }, {
+    },
+    {
+        path: '/register',
+        component: Register,
+        name: 'register'
+    },
+    {
         path: '/home',
         name: 'basicLayout',
         alias: '/',
@@ -36,8 +45,11 @@ const routes = [
         },
         children: [
             { path: 'index', name: 'index', component: Index },
-            { path: 'generatorManager', name: 'generatorManager', component: GeneratorManager },
-            { path: 'createGenerator', name: 'createGenerator', component: CreateGenerator },
+            { path: 'generator/manager', name: 'generatorManager', component: GeneratorManager },
+            { path: 'generator/create', name: 'createGenerator', component: CreateGenerator },
+            { path: 'generator/update/:id', name: 'updateGenerator', props: true, component: CreateGenerator },
+            { path: 'generator/detail/:id', name: 'generatorDetail', props: true, component: GeneratorDetail },
+            { path: 'generator/use/:id', name: 'useGenerator', props: true, component: UseGenerator },
         ]
     }
 ]

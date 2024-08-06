@@ -36,9 +36,15 @@ spring:
 #        max-idle: 10
 #        # 连接池中的最小空闲连接
 #        min-idle: 0
+  # 文件上传
+  servlet:
+    multipart:
+      # 大小限制
+      max-file-size: 20MB
+      max-request-size: 20MB
 server:
   address: 0.0.0.0
-  port: 8120
+  port: 8080
   servlet:
     context-path: /api
     # cookie 30 天过期

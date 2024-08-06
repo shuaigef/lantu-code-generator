@@ -6,9 +6,9 @@
           <div class="header-inner-left">
             <div class="logo">
               <a-space>
-                <img style="height: 32px;" src="../assets/vue.svg"></img>
+                <img style="height: 32px;" src="../assets/logo.png"></img>
                 <span style="  font-size: 19px;font-weight: 600;">
-                  代码生成器
+                  蓝图代码生成器
                 </span>
               </a-space>
             </div>
@@ -17,10 +17,10 @@
               <a-menu-item key="/index">
                 <HomeOutlined />首页
               </a-menu-item>
-              <a-menu-item key="/generatorManager">
+              <a-menu-item key="/generator/manager" v-if="loginUser.userRole == UserRoleEnum.ADMIN">
                 <ProfileOutlined />代码生成器管理
               </a-menu-item>
-              <a-menu-item key="/createGenerator">
+              <a-menu-item key="/generator/create">
                 <PlusOutlined />创建生成器
               </a-menu-item>
             </a-menu>
@@ -64,7 +64,7 @@ import {useRouter} from "vue-router";
 import {userLogout} from "../api/user.ts";
 import {useUserStore} from "../store";
 import {storeToRefs} from "pinia";
-import {LocalStorageEnum} from "../constant";
+import {LocalStorageEnum, UserRoleEnum} from "../constants";
 import { UserOutlined, HomeOutlined, ProfileOutlined, PlusOutlined } from '@ant-design/icons-vue';
 
 const userStore = useUserStore()
@@ -109,7 +109,7 @@ const logout = () => {
 }
 .layout .logo {
   float: left;
-  width: 150px;
+  width: 200px;
   height: 50px;
 
 }

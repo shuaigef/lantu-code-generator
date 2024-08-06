@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios'
-import {LocalStorageEnum} from '../constant';
+import {LocalStorageEnum} from '../constants';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8120/api/',
+  baseURL: 'http://localhost:8080/api/',
   timeout: 10000,
 });
 

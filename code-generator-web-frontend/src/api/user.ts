@@ -25,3 +25,12 @@ export async function userLogout() {
     })
 }
 
+/** 用户注册接口 POST /user/register */
+export async function userRegister(body: API.UserRegisterParams) {
+    return http.request<string>({
+        url: "/user/register",
+        method: "POST",
+        data: body
+    })
+}
+

@@ -68,6 +68,13 @@ declare namespace API {
         createTime: Date | undefined
     }
 
+    /** 用户注册请求参数 */
+    type UserRegisterParams = {
+        userAccount: string,
+        userPassword: string,
+        checkPassword: string
+    }
+
     // endregion
 
     // region 代码生成器相关
@@ -99,6 +106,42 @@ declare namespace API {
         status: number
     } & PageRequest
 
+    type FileInfo = {
+        inputPath?: string,
+        outputPath?: string,
+        type?: string,
+        generateType?: string,
+        condition?: string,
+        groupKey?: string,
+        groupName?: string,
+        files?: FileInfo[]
+    }
+
+    type FileConfig = {
+        inputRootPath?: string,
+        outputRootPath?: string,
+        sourceRootPath?: string,
+        type?: string,
+        files: FileInfo[]
+    }
+
+    type ModelInfo = {
+        fieldName?: string,
+        type?: string,
+        description?: string,
+        defaultValue?: string,
+        abbr?: string,
+        groupKey?: string,
+        groupName?: string,
+        models?: ModelInfo[],
+        condition?: string,
+        allArgsStr?: string
+    }
+
+    type ModelConfig = {
+        models: ModelInfo[]
+    }
+
     /** 代码生成器 */
     type Generator = {
         id: string,
@@ -109,8 +152,8 @@ declare namespace API {
         author: string,
         tags: string,
         picture: string,
-        fileConfig: string,
-        modelConfig: string,
+        fileConfig: FileConfig,
+        modelConfig: ModelConfig,
         distPath: string,
         status: number,
         userId: string,
@@ -139,6 +182,36 @@ declare namespace API {
         user: UserVO
     }
 
+    /** 新增代码生成器请求参数 */
+    type GeneratorAddParams = {
+        name: string,
+        description: string,
+        basePackage: string,
+        version: string,
+        author: string,
+        tags: string[],
+        picture: string,
+        fileConfig: FileConfig,
+        modelConfig: ModelConfig,
+        distPath: string,
+        status: number
+    }
+
+    /** 编辑代码生成器请求参数 */
+    type GeneratorEditParams = {
+        id: string,
+        name: string,
+        description: string,
+        basePackage: string,
+        version: string,
+        author: string,
+        tags: string[],
+        picture: string,
+        fileConfig: FileConfig | undefined,
+        modelConfig: ModelConfig | undefined,
+        distPath: string
+    }
+
     /** 更新代码生成器请求参数 */
     type GeneratorUpdateParams = {
         id: string,
@@ -155,6 +228,31 @@ declare namespace API {
         status: number,
         userId: string
     }
+
+    /** 使用代码生成器请求参数 */
+    type GeneratorUseParams = {
+        id: string,
+        dataModel: object
+    }
+
+    /** 元信息 */
+    type Meta = {
+        name: string,
+        description: string,
+        basePackage: string,
+        version: string,
+        author: string,
+        fileConfig: FileConfig,
+        modelConfig: ModelConfig
+    }
+
+    /** 制作代码生成器请求参数 */
+    type GeneratorMakeParams = {
+        meta: Meta,
+        zipFilePath: string
+    }
+
+
 
     // endregion
 

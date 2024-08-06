@@ -14,7 +14,9 @@ import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
 import com.shuaigef.maker.generator.main.GenerateTemplate;
+import com.shuaigef.maker.generator.main.MainGenerator;
 import com.shuaigef.maker.generator.main.ZipGenerator;
+import com.shuaigef.maker.meta.Meta;
 import com.shuaigef.maker.meta.MetaValidator;
 import com.shuaigef.web.common.BaseResponse;
 import com.shuaigef.web.common.DeleteRequest;
@@ -24,19 +26,16 @@ import com.shuaigef.web.constant.UserConstant;
 import com.shuaigef.web.exception.BusinessException;
 import com.shuaigef.web.exception.ThrowUtils;
 import com.shuaigef.web.manager.CosManager;
-import com.shuaigef.maker.meta.Meta;
 import com.shuaigef.web.model.dto.generator.*;
 import com.shuaigef.web.model.entity.Generator;
 import com.shuaigef.web.model.entity.User;
 import com.shuaigef.web.model.vo.GeneratorVO;
 import com.shuaigef.web.service.GeneratorService;
 import com.shuaigef.web.service.UserService;
-import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -46,7 +45,6 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -368,8 +366,9 @@ public class GeneratorController {
 
         // 执行脚本
         // 找到脚本文件所在路径
+        // 如果不是 windows 系统，找 generator 文件而不是 bat
         File scriptFile = FileUtil.loopFiles(unzipDistDir, 2, null).stream()
-                .filter(file -> file.isFile() && "generator".equals(file.getName()))
+                .filter(file -> file.isFile() && "generator.bat".equals(file.getName()))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
 
@@ -383,8 +382,14 @@ public class GeneratorController {
 
         // 构造命令
         File scriptDir = scriptFile.getParentFile();
+
+        // 注意，如果是 mac / linux 系统，要用 "./generator"
+        // String scriptAbsolutePath = scriptFile.getAbsolutePath();
+        // String[] commands = new String[]{scriptAbsolutePath, "json-generate", "--file=" + dataModelFilePath};
+
+        // win 系统
         String scriptAbsolutePath = scriptFile.getAbsolutePath().replace("\\", "/");
-        String[] commands = new String[] {scriptAbsolutePath, "json-generate", "--file=" + dataModelFilePath};
+        String[] commands = new String[]{scriptAbsolutePath, "json-generate", "--file=" + dataModelFilePath};
 
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
         processBuilder.directory(scriptDir);
@@ -470,6 +475,7 @@ public class GeneratorController {
 
         // 调用 maker 方法制作生成器
         GenerateTemplate generateTemplate = new ZipGenerator();
+        // GenerateTemplate generateTemplate = new MainGenerator();
         try {
             generateTemplate.doGenerate(meta, outputPath);
         } catch (Exception e) {
