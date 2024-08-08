@@ -52,12 +52,13 @@
 
         <a-collapse collapsible="header">
           <a-collapse-panel key="1" header="生成制作工具">
-            <a-form layout='vertical'>
-              <a-form-item label="模板文件" name="templateFilePath">
-                <FileUpload v-model:value="templateFilePath" :biz="FileUploadBizEnum.GENERATOR_MAKE_TEMPLATE" :maxCount="1"></FileUpload>
-              </a-form-item>
-            </a-form>
-            <a-button type="primary" @click="makerTemplate" :loading="makerLoading">制作</a-button>
+            <!--<a-form layout='vertical'>-->
+            <!--  <a-form-item label="模板文件" name="templateFilePath">-->
+            <!--    <FileUpload v-model:value="templateFilePath" :biz="FileUploadBizEnum.GENERATOR_MAKE_TEMPLATE" :maxCount="1"></FileUpload>-->
+            <!--  </a-form-item>-->
+            <!--</a-form>-->
+            <!--<a-button type="primary" @click="makerTemplateOld" :loading="makerLoading">制作</a-button>-->
+            <GeneratorMake :meta="formState"/>
           </a-collapse-panel>
         </a-collapse>
 
@@ -87,10 +88,10 @@ import PictureUpload from "../../components/upload/PictureUpload.vue";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import {message} from "ant-design-vue";
-import {saveAs} from "file-saver";
-import {addGenerator, editGenerator, getGeneratorVOById, makeGenerator} from "../../api/code-generator.ts";
+import {addGenerator, editGenerator, getGeneratorVOById} from "../../api/code-generator.ts";
 import AddModelConfig from "./components/AddModelConfig.vue";
 import AddFileConfig from "./components/AddFileConfig.vue";
+import GeneratorMake from "./components/GeneratorMake.vue";
 
 const current = ref<number>(0);
 const router = useRouter()
@@ -168,8 +169,6 @@ const formState = ref<API.GeneratorAddParams>({
   distPath: "",
   status: 0
 })
-
-const templateFilePath = ref('')
 
 const rulesAdd = {
   name: [{
@@ -252,24 +251,29 @@ const doSubmit = async () => {
   }
 }
 
-const makerLoading = ref(false)
-const makerTemplate = async () => {
-  makerLoading.value = true
-  const meta: API.Meta = {
-    name: formState.value.name,
-    description: formState.value.description,
-    basePackage: formState.value.basePackage,
-    version: formState.value.version,
-    author: formState.value.author,
-    modelConfig: formState.value.modelConfig,
-    fileConfig: formState.value.fileConfig,
-  }
-  const res = await makeGenerator({ zipFilePath: templateFilePath.value, meta: meta })
-  saveAs(res, `${formState.value.name}.zip`)
-  message.success('下载成功')
-  templateFilePath.value = ''
-  makerLoading.value = false
-}
+// #region 生成器制作（旧版本）
+// const templateFilePath = ref('')
+
+// const makerLoading = ref(false)
+// const makerTemplateOld = async () => {
+//   makerLoading.value = true
+//   const meta: API.Meta = {
+//     name: formState.value.name,
+//     description: formState.value.description,
+//     basePackage: formState.value.basePackage,
+//     version: formState.value.version,
+//     author: formState.value.author,
+//     modelConfig: formState.value.modelConfig,
+//     fileConfig: formState.value.fileConfig,
+//   }
+//   const res = await makeGeneratorOld({ zipFilePath: templateFilePath.value, meta: meta })
+//   saveAs(res, `${formState.value.name}.zip`)
+//   message.success('下载成功')
+//   templateFilePath.value = ''
+//   makerLoading.value = false
+// }
+
+// #endregion
 
 const routerBack = () => {
   router.back()

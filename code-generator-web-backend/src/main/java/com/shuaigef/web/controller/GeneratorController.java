@@ -14,7 +14,6 @@ import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
 import com.shuaigef.maker.generator.main.GenerateTemplate;
-import com.shuaigef.maker.generator.main.MainGenerator;
 import com.shuaigef.maker.generator.main.ZipGenerator;
 import com.shuaigef.maker.meta.Meta;
 import com.shuaigef.maker.meta.MetaValidator;
@@ -35,6 +34,7 @@ import com.shuaigef.web.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -432,13 +432,77 @@ public class GeneratorController {
     }
 
     /**
-     * 制作代码生成器
+     * 制作代码生成器（优化过后）
+     *
+     * @param multipartFile
+     * @param metaStr
+     * @param response
+     * @throws IOException
+     */
+    @PostMapping("/make")
+    public void makeGenerator(@RequestPart("file") MultipartFile multipartFile, @RequestPart("meta") String metaStr, HttpServletResponse response) throws IOException {
+        // 输入参数
+        Meta meta = JSONUtil.toBean(metaStr, Meta.class);
+
+        // 登录用户
+        Object userObj = StpUtil.getSession().get(SaSession.USER);
+        User user = (User) userObj;
+
+        // 创建独立的工作空间，下载压缩包到本地
+        String projectPath = System.getProperty("user.dir");
+        String id = IdUtil.getSnowflakeNextId() + RandomUtil.randomString(6);
+        String tempDirPath = String.format("%s/.temp/make/%s", projectPath, id);
+        String localZipFilePath = tempDirPath + "/project.zip";
+
+        // 在本地创建临时文件
+        File projectFile = new File(localZipFilePath);
+        FileUtil.touch(projectFile);
+        multipartFile.transferTo(projectFile);
+
+        // 解压，得到项目模板文件
+        File unzipDistDir = ZipUtil.unzip(localZipFilePath);
+
+        // 构造 meta 对象和生成器的输出路径
+        String sourceRootPath = unzipDistDir.getAbsolutePath();
+        meta.getFileConfig().setSourceRootPath(sourceRootPath);
+        // 校验和处理默认值
+        MetaValidator.doValidator(meta);
+        String outputPath = tempDirPath + "/generated/" + meta.getName();
+
+        // 调用 maker 方法制作生成器
+        GenerateTemplate generateTemplate = new ZipGenerator();
+        try {
+            generateTemplate.doGenerate(meta, outputPath);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "制作失败");
+        }
+
+        // 下载制作好的生成器压缩包
+        String suffix = "-dist.zip";
+        String zipFileName = meta.getName() + suffix;
+        // 生成器压缩包绝对路径
+        String distZipFilePath = outputPath + suffix;
+
+        // 设置响应头
+        response.setContentType("application/octet-stream; charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + zipFileName);
+        // 写入响应
+        Files.copy(Paths.get(distZipFilePath), response.getOutputStream());
+
+        // 清理工作空间的文件
+        CompletableFuture.runAsync(() -> {
+            FileUtil.del(tempDirPath);
+        });
+    }
+
+    /**
+     * 制作代码生成器（旧版本）
      *
      * @param generatorMakeRequest
      * @param response
      */
-    @PostMapping("/make")
-    public void makeGenerator(@RequestBody GeneratorMakeRequest generatorMakeRequest, HttpServletResponse response) throws IOException {
+    @PostMapping("/make/old")
+    public void makeGeneratorOld(@RequestBody GeneratorMakeOldRequest generatorMakeRequest, HttpServletResponse response) throws IOException {
         // 输入参数
         Meta meta = generatorMakeRequest.getMeta();
         String zipFilePath = generatorMakeRequest.getZipFilePath();

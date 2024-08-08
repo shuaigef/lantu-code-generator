@@ -248,11 +248,14 @@ declare namespace API {
 
     /** 制作代码生成器请求参数 */
     type GeneratorMakeParams = {
+        meta: Meta
+    }
+
+    /** 制作代码生成器请求参数 */
+    type GeneratorMakeOldParams = {
         meta: Meta,
         zipFilePath: string
     }
-
-
 
     // endregion
 

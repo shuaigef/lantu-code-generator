@@ -1,7 +1,7 @@
 import http from "../plugins/request.ts";
 
 /** 文件上传接口 POST /file/upload */
-export async function uploadFile(biz: String, file: any) {
+export async function uploadFile(biz: string, file: any) {
     return http.request<string>({
         url: "/file/upload",
         method: "POST",

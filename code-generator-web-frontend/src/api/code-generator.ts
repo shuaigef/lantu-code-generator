@@ -82,9 +82,22 @@ export async function useGenerator(body: API.GeneratorUseParams) {
 }
 
 /** 制作代码生成器接口 POST /generator/make */
-export async function makeGenerator(body: API.GeneratorMakeParams) {
+export async function makeGenerator(formData: FormData) {
     return http.request({
         url: "/generator/make",
+        method: "POST",
+        data: formData,
+        headers: {
+            "Content-Type": "multipart/form-data; charset=UTF-8",
+        },
+        responseType: 'blob'
+    })
+}
+
+/** 制作代码生成器接口 POST /generator/make */
+export async function makeGeneratorOld(body: API.GeneratorMakeOldParams) {
+    return http.request({
+        url: "/generator/make/old",
         method: "POST",
         data: body,
         responseType: 'blob'
